@@ -23,56 +23,39 @@ func main() {
 func fibHandler(curPos int, fibonacciValues []int) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		param := mux.Vars(r)
+
 		switch param["input"] {
 		case "next":
-			fmt.Println("next")
+			fmt.Println("next route hit")
+			curPos++
 			if curPos >= len(fibonacciValues) {
 				fmt.Println("making new num")
 				fibonacciValues = newFibNum(fibonacciValues)
 			}
-
-			fmt.Println("curpos = " + strconv.Itoa(curPos))
-			fmt.Println("fibNum = " + strconv.Itoa(fibonacciValues[curPos]))
 			w.Write([]byte(strconv.Itoa(fibonacciValues[curPos])))
-			curPos++
-			return
+
 		case "current":
-			fmt.Println("current")
-			fmt.Println("curpos = " + strconv.Itoa(curPos))
-			fmt.Println("fibNum = " + strconv.Itoa(fibonacciValues[curPos]))
-
+			fmt.Println("current route hit")
 			w.Write([]byte(strconv.Itoa(fibonacciValues[curPos])))
-			return
 
 		case "last":
-			fmt.Println("last")
+			fmt.Println("last route hit")
 			curPos--
-			fmt.Println("curpos = " + strconv.Itoa(curPos))
-			fmt.Println("fibNum = " + strconv.Itoa(fibonacciValues[curPos]))
-
 			w.Write([]byte(strconv.Itoa(fibonacciValues[curPos])))
-			return
 
 		default:
+			fmt.Println("error, no matching endpoint")
+			w.WriteHeader(http.StatusNotFound)
+			w.Write([]byte("error, no matching endpoint found"))
 		}
+		return
 	}
 }
 
 func newFibNum(fibonacciValues []int) []int {
-	var firstValue int
-	var secondValue int
-	if len(fibonacciValues) < 1 {
-		firstValue = 1
-		secondValue = 0
-	} else if len(fibonacciValues) < 2 {
-		firstValue = fibonacciValues[len(fibonacciValues)-1]
-		secondValue = 0
-	} else {
-		firstValue = fibonacciValues[len(fibonacciValues)-1]
-		secondValue = fibonacciValues[len(fibonacciValues)-2]
-	}
-	newNumToAdd := firstValue + secondValue
 
+	newNumToAdd := fibonacciValues[len(fibonacciValues)-1] + fibonacciValues[len(fibonacciValues)-2]
 	fibonacciValues = append(fibonacciValues, newNumToAdd)
+
 	return fibonacciValues
 }
