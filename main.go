@@ -40,9 +40,12 @@ func fibHandler(curPos int, fibonacciValues []int) func(w http.ResponseWriter, r
 
 		case "last":
 			fmt.Println("last route hit")
-			curPos--
-			w.Write([]byte(strconv.Itoa(fibonacciValues[curPos])))
-
+			if curPos > 0 {
+				curPos--
+				w.Write([]byte(strconv.Itoa(fibonacciValues[curPos])))
+			} else {
+				w.Write([]byte("No values below 0"))
+			}
 		default:
 			fmt.Println("error, no matching endpoint")
 			w.WriteHeader(http.StatusNotFound)
